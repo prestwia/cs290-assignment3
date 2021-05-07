@@ -118,3 +118,66 @@ function createNewTwit(twitText, twitAuthor) {
   var twitContainer = document.getElementsByClassName('twit-container')
   twitContainer[0].appendChild(article)
 }
+
+
+/* search functionality */
+/* add event listener to search input field that is type input. this
+will allow for live search */
+var searchInput = document.getElementById('navbar-search-input')
+searchInput.addEventListener('input', function() {
+  /* add back deleted twits before next search */
+  addBackTwits(deleted)
+  /* get text in input field */
+  var input = document.getElementById('navbar-search-input').value
+  /* change input to lower case to add case insensitivity to search */
+  var caseInsensitive = input.toLowerCase()
+  /* search DOM and remove non-matching twits */
+  searchDOM(caseInsensitive)
+})
+
+/* array to store all deleted twits */
+var deleted = []
+
+/* function to add deleted twits back to DOM */
+function addBackTwits(deleted) {
+  /* only do if deleted has elements */
+  if (deleted != undefined) {
+    /* get twit container */
+    var parent = document.getElementsByClassName('twit-container')[0]
+    for (i = deleted.length - 1; i >= 0; i--) {
+      /* add back twit in previous location using inserBefore */
+      var inserted = parent.insertBefore(deleted[i][1], parent.children[deleted[i][0]])
+      deleted.pop()
+    }
+  }
+}
+
+/* function to search and remove twits that don't match */
+function searchDOM(input) {
+  /* get text and authors from dom */
+  var texts = document.getElementsByClassName('twit-text')
+  var authors = document.getElementsByClassName('twit-author')
+
+  for (i = texts.length - 1; i >= 0; i--) {
+    /* get text content within text and author [i] */
+    var text = texts[i].textContent
+    var author = authors[i].getElementsByTagName('a')[0].textContent
+    /* get twit container (used to remove twit from DOM) */
+    var twit = texts[i].parentNode.parentNode
+    /* check if any text matches search input */
+    /* change text to lower case for case insensitivity */
+    /* search both text and author using the or-statement */
+    if (text.toLowerCase().indexOf(input) > -1 || author.toLowerCase().indexOf(input) > -1) {
+      /* twit matches do nothing */
+    }
+    else {
+      /* remove from DOM */
+      /* save twit in deleted array */
+      var save = [i, twit]
+      deleted.push(save)
+      /* remove twit from twit container */
+      var twitContainer = twit.parentNode
+      twitContainer.removeChild(twit)
+    }
+  }
+}
